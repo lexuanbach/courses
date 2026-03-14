@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Course Homework Submission</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body{
+  font-family: Arial;
+  max-width:600px;
+  margin:auto;
+  padding:40px;
+}
+
+.card{
+  border:1px solid #ddd;
+  padding:20px;
+  border-radius:10px;
+}
+
+button{
+  padding:10px 15px;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Submit Homework</h2>
+
+<div class="card">
+
+<label>Name</label>
+<input id="name" type="text"><br><br>
+
+<label>Student ID</label>
+<input id="sid" type="text"><br><br>
+
+<label>Upload file</label>
+<input id="file" type="file"><br><br>
+
+<button onclick="submitHomework()">Submit</button>
+
+<p id="status"></p>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "YOUR_SUPABASE_URL"
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY"
+
+const supabase = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+)
+
+async function submitHomework(){
+
+  const name = document.getElementById("name").value
+  const sid = document.getElementById("sid").value
+  const file = document.getElementById("file").files[0]
+
+  if(!file){
+    alert("please upload a file")
+    return
+  }
+
+  const filename = sid + "_" + file.name
+
+  const {data, error} = await supabase
+      .storage
+      .from("homework")
+      .upload(filename, file)
+
+  if(error){
+      document.getElementById("status").innerText = "Upload failed"
+  }else{
+      document.getElementById("status").innerText = "Submitted successfully!"
+  }
+
+}
+
+</script>
+
+</body>
+</html>
